@@ -6,11 +6,11 @@ Pipeline de engenharia de dados para acompanhar diariamente preços de cartas e 
 
 ## Coleção escolhida
 
-- Nome: `PREENCHER`
-- Sigla: `PREENCHER`
-- TCGplayer `group_id`: `PREENCHER`
-- Responsável: `PREENCHER`
-- Prefixo de escrita: `tcg/raw/tcgplayer/group_id=PREENCHER/`
+- Nome: ME01 - Mega Evolution
+- Sigla: MEG
+- TCGplayer: 24380
+- Responsável: Douglas Proença Rolim de Souza
+- Prefixo de escrita: 26/09/2025
 
 Antes da primeira gravação, confirmar que esse prefixo ainda não existe no bucket `tcg` do RustFS da turma. Cada aluno escreve apenas no prefixo de sua coleção.
 

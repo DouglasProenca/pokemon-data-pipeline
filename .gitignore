@@ -17,3 +17,5 @@ htmlcov/
 *.duckdb
 *.db
 .parquet
+data/
+*.parquet
