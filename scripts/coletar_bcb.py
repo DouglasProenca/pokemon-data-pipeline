@@ -4,6 +4,9 @@ import json
 from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
+from src.coleta.gravador_raw import (
+    gravar_ou_validar_existente,
+)
 
 import boto3
 import requests
@@ -281,46 +284,24 @@ def gravar_arquivos(arquivos):
 
     s3 = criar_cliente_s3()
 
-    # Verifica todas as chaves antes de qualquer escrita
-    existentes = [
-        key for key, _ in arquivos
-        if objeto_existe(s3, key)
-    ]
-
-    if existentes:
-        raise FileExistsError(
-            "A coleta ja possui objetos gravados. "
-            "Nenhum arquivo foi sobrescrito: "
-            + ", ".join(existentes)
-        )
+    gravados = 0
 
     for key, conteudo in arquivos:
 
-        s3.put_object(
-            Bucket=BUCKET,
-            Key=key,
-            Body=conteudo,
-            ContentType="application/json"
+        novo = gravar_ou_validar_existente(
+            s3=s3,
+            bucket=BUCKET,
+            key=key,
+            conteudo=conteudo,
         )
 
-        print(f"Gravado: {key}")
+        if novo:
+            print(f"Arquivo gravado e validado: {key}")
+            gravados += 1
+        else:
+            print(f"Arquivo identico ja existente: {key}")
 
-    # Confirma leitura diretamente do RustFS
-    for key, conteudo in arquivos:
-
-        response = s3.get_object(
-            Bucket=BUCKET,
-            Key=key
-        )
-
-        conteudo_remoto = response["Body"].read()
-
-        if conteudo_remoto != conteudo:
-            raise RuntimeError(
-                f"Falha na verificacao do arquivo: {key}"
-            )
-
-        print(f"Leitura remota confirmada: {key}")
+    return gravados
 
 
 # =====================================================

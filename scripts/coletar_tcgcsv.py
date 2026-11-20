@@ -4,6 +4,9 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
+from src.coleta.gravador_raw import (
+    gravar_ou_validar_existente,
+)
 
 import boto3
 import requests
@@ -180,19 +183,19 @@ def objeto_existe(s3, bucket, key):
 
 def gravar_raw_imutavel(s3, bucket, key, conteudo):
 
-    if objeto_existe(s3, bucket, key):
-        raise FileExistsError(
-            f"O objeto ja existe e nao sera sobrescrito: {key}"
-        )
-
-    s3.put_object(
-        Bucket=bucket,
-        Key=key,
-        Body=conteudo,
-        ContentType="application/json"
+    novo = gravar_ou_validar_existente(
+        s3=s3,
+        bucket=bucket,
+        key=key,
+        conteudo=conteudo,
     )
 
-    print(f"Arquivo gravado: {key}")
+    if novo:
+        print(f"Arquivo gravado e validado: {key}")
+    else:
+        print(f"Arquivo identico ja existente: {key}")
+
+    return novo
 
 
 # ---------------------------------------------------------

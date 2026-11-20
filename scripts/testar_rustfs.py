@@ -13,8 +13,6 @@ access_key = os.getenv("S3_ACCESS_KEY")
 secret_key = os.getenv("S3_SECRET_KEY")
 region = os.getenv("S3_REGION", "us-east-1")
 
-print("secret_key", secret_key)
-
 if not all([endpoint, bucket, access_key, secret_key]):
     raise RuntimeError("Existem configurações obrigatórias ausentes no .env")
 
